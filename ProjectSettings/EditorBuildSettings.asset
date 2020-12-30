@@ -8,4 +8,7 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/UmutBebek/URP/ShaderToy/Scenes and Shaders/girl.unity
+    guid: 200f5724b8b89094cb9a4c2b932b9979
   m_configObjects: {}

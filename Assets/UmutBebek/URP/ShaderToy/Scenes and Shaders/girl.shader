@@ -6,12 +6,9 @@
       _Channel1("Channel1 (RGB)", 2D) = "" {}
       _Channel2("Channel2 (RGB)", 2D) = "" {}
       [HideInInspector]iMouse("Mouse", Vector) = (0,0,0,0)
-      /*_Iteration("Iteration", float) = 1
-      _NeighbourPixels("Neighbour Pixels", float) = 1
-      _Lod("Lod",float) = 0
-      _AR("AR Mode",float) = 0*/
       AA("AA", float) = 1
-
+      _HeadPos("Head Pos",Vector) = (0.0,0.05,0.07,0)
+      _HeadScale("Head Scale",Vector) = (0.8,0.75,0.85,0)
    }
 
    SubShader
@@ -71,6 +68,9 @@
          float4 iMouse;
          float AA;
 
+         float4 _HeadPos;
+         float4 _HeadScale;
+
          /*float _Lod;
          float _Iteration;
          float _NeighbourPixels;
@@ -118,14 +118,7 @@
          // Making - of and related math / shader / art explanations ( 6 hours 
          // long ) : https: // www.youtube.com / watch?v = Cfe5UQ - 1L9Q 
          // 
-         // Video capture: https: // www.youtube.com / watch?v = s_UOFo2IULQ 
-
-
-         #if HW_PERFORMANCE == 0
-            #define AA 1
-         #else 
-            #define AA 2 // Set AA to 1 if your machine is too slow 
-         #endif         
+         // Video capture: https: // www.youtube.com / watch?v = s_UOFo2IULQ     
 
 
          //--------------------------------------------------
@@ -142,12 +135,12 @@
             float fl = 1.7;
 
             float3 fb1 = fbm13( 0.15*time, 0.50 );
-            //ro.xyz += 0.010*fb1.xyz;
+            ro.xyz += 0.010*fb1.xyz;
             float3 fb2 = fbm13( 0.33*time, 0.65 );
             fb2 = fb2*fb2*sign(fb2);
-            //ta.xy += 0.005*fb2.xy;
+            ta.xy += 0.005*fb2.xy;
             float cr = -0.01 + 0.002*fb2.z;
-            cr = 0;                 
+            //cr = 0;                 
             
             // camera matrix
             float3 ww = normalize( ta - ro );
@@ -298,7 +291,11 @@
             float3 sos = float3(sqrt(qos.x*qos.x+0.0005),pos.yz);                  
             
             // head
-            float d = sdEllipsoid( pos-float3(0.0,0.05,0.07), float3(0.8,0.75,0.85) );
+            float d = sdEllipsoid( pos-_HeadPos.xyz, _HeadScale.xyz );
+
+            float4 res = float4( d, 0, 0, 0 );
+
+            return res;
 
             // jaw
             float3 mos = pos-float3(0.0,-0.38,0.35); mos.yz = rot(mos.yz,0.4);
@@ -421,8 +418,7 @@
             d = smin(d,d2,0.4);
             
             // register eyelases now
-            float4 res = float4( d, isLip, 0, 0 );
-            //float4 res = float4( d, 0, 0, 0 );
+            res = float4( d, isLip, 0, 0 );            
 
             if( deyelashes<res.x )
             {
@@ -738,10 +734,10 @@
                   col -= 0.03*smoothstep(0.13,0.0,length((qos.xy-float2(0,-0.49))/float2(2,1)));
                   
                   // lips
-                  col = lerp(col,float3(0.14,0.06,0.1),cma.x*step(-0.7,qos.y));
+                  //col = lerp(col,float3(0.14,0.06,0.1),cma.x*step(-0.7,qos.y));
                   
                   // eyelashes
-                  col = lerp(col,float3(0.04,0.02,0.02)*0.6,0.9*cma.y);
+                  //col = lerp(col,float3(0.04,0.02,0.02)*0.6,0.9*cma.y);
 
                   // fake skin drag
                   uvw.y += 0.025*animData.x*smoothstep(0.3,0.1,length(uvw-float3(0.0,0.1,1.0)));
@@ -752,7 +748,7 @@
                   float2 uv = frac(uvw.xy/0.04)-0.5;
                   float te = frac(111.0*sin(1111.0*ti.x+1331.0*ti.y));
                   te = smoothstep(0.9,1.0,te)*exp(-dot(uv,uv)*24.0); 
-                  col *= lerp(float3(1.1,1.1,1.1),float3(0.8,0.6,0.4), te);
+                  //col *= lerp(float3(1.1,1.1,1.1),float3(0.8,0.6,0.4), te);
 
                   // texture for specular
                   //ks = 0.5 + 4.0*texture(iChannel3,uvw.xy*1.1).x;
@@ -764,11 +760,11 @@
                   ks *= 1.0 + cma.x;
                   
                   // black top
-                  col *= 1.0-smoothstep(0.48,0.51,uvw.y);
+                  //col *= 1.0-smoothstep(0.48,0.51,uvw.y);
                   
                   // makeup
                   float d2 = sdEllipsoid(qos-float3(0.25,-0.03,0.43),float3(0.37,0.42,0.4));
-                  col = lerp(col,float3(0.06,0.024,0.06),1.0 - smoothstep(0.0,0.03,d2));
+                  //col = lerp(col,float3(0.06,0.024,0.06),1.0 - smoothstep(0.0,0.03,d2));
 
                   // eyebrows
                   {
@@ -789,7 +785,7 @@
                      0.3*sin((qos.x-0.8*qos.y)*250.0+1.0));
                      float d = be.x - ra*dd;
                      float mask = 1.0-smoothstep(-0.005,0.01,d);
-                     col = lerp(col,float3(0.04,0.02,0.02),mask*dd );
+                     //col = lerp(col,float3(0.04,0.02,0.02),mask*dd );
                   }
 
                   // fake occlusion
