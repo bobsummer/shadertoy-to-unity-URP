@@ -9,6 +9,19 @@
       AA("AA", float) = 1
       _HeadPos("Head Pos",Vector) = (0.0,0.05,0.07,0)
       _HeadScale("Head Scale",Vector) = (0.8,0.75,0.85,0)
+
+      _JawPos1("Jaw Pos 1",Vector) = (0.0,-0.38,0.35)
+      _JawPos2("Jaw Pos 2",Vector) = (0,-0.17,0.16)
+
+      _JawRot1("Jaw Rot 1",float) = 0.4
+      _JawRot2("Jaw Rot 2",float) = 0.1
+
+      _JawBaseScale("Jaw Base Scale",Vector) = (0.66,0.43,0.50)
+
+      _RayOrigin("Ray Origin",Vector) = ( -0.5563, -0.2, 2.7442,0 )
+      _RayTarget("Ray Target",Vector) = ( 0.0, -0.3, 0.0 ,0)
+      _FL("FL",float) = 1.7
+      _HeadJawSMin("Head Jaw SMin",float) = 0.19
    }
 
    SubShader
@@ -70,6 +83,15 @@
 
          float4 _HeadPos;
          float4 _HeadScale;
+         float4 _RayOrigin;
+         float4 _RayTarget;
+         float  _FL;
+         float  _HeadJawSMin;
+         float3 _JawPos1;
+         float3 _JawPos2;
+         float _JawRot1;
+         float _JawRot2;
+         float3 _JawBaseScale;
 
          /*float _Lod;
          float _Iteration;
@@ -130,17 +152,17 @@
          //--------------------------------------
          float3x3 calcCamera( in float time, out float3 oRo, out float oFl )
          {
-            float3 ta = float3( 0.0, -0.3, 0.0 );
-            float3 ro = float3( -0.5563, -0.2, 2.7442 );
-            float fl = 1.7;
+            float3 ta = _RayTarget;
+            float3 ro = _RayOrigin;
+            float fl = _FL;
 
             float3 fb1 = fbm13( 0.15*time, 0.50 );
-            ro.xyz += 0.010*fb1.xyz;
+            //ro.xyz += 0.010*fb1.xyz;
             float3 fb2 = fbm13( 0.33*time, 0.65 );
             fb2 = fb2*fb2*sign(fb2);
-            ta.xy += 0.005*fb2.xy;
+            //ta.xy += 0.005*fb2.xy;
             float cr = -0.01 + 0.002*fb2.z;
-            //cr = 0;                 
+            cr = 0;                 
             
             // camera matrix
             float3 ww = normalize( ta - ro );
@@ -293,17 +315,23 @@
             // head
             float d = sdEllipsoid( pos-_HeadPos.xyz, _HeadScale.xyz );
 
-            float4 res = float4( d, 0, 0, 0 );
-
-            return res;
-
             // jaw
-            float3 mos = pos-float3(0.0,-0.38,0.35); mos.yz = rot(mos.yz,0.4);
-            mos.yz = rot(mos.yz,0.1*animData.z);
-            float d2 = sdEllipsoid(mos-float3(0,-0.17,0.16),
-            float3(0.66+sclamp(mos.y*0.9-0.1*mos.z,-0.3,0.4),
-            0.43+sclamp(mos.y*0.5,-0.5,0.2),
-            0.50+sclamp(mos.y*0.3,-0.45,0.5)));
+            float3 mos = pos-_JawPos1; 
+            mos.yz = rot(mos.yz,_JawRot1);
+            //mos.yz = rot(mos.yz,_JawRot2*animData.z);
+            float d2 = sdEllipsoid(mos-_JawPos2,
+            float3(
+            _JawBaseScale.x,
+            _JawBaseScale.y,
+            _JawBaseScale.z));
+            // float3(
+            // _JawBaseScale.x+sclamp(mos.y*0.9-0.1*mos.z,-0.3,0.4),
+            // _JawBaseScale.y+sclamp(mos.y*0.5,-0.5,0.2),
+            // _JawBaseScale.z+sclamp(mos.y*0.3,-0.45,0.5)));
+
+            d = smin(d,d2,_HeadJawSMin);
+            float4 res = float4( d, 0, 0, 0 );
+            return res;
             
             // mouth hole
             d2 = smax(d2,-sdEllipsoid(mos-float3(0,0.06,0.6+0.05*animData.z), float3(0.16,0.035+0.05*animData.z,0.1)),0.01);
@@ -1025,8 +1053,8 @@
                // camera movement	
                float3 ro; float fl;
                float3x3 ca = calcCamera( time, ro, fl );
-               float3 rd = mul(ca,normalize(float3((p-float2(-0.52,0.12))/1.1,fl)));
-
+               //float3 rd = mul(ca,normalize(float3((p-float2(-0.52,0.12))/1.1,fl)));
+               float3 rd = mul(ca,normalize(float3(p,fl)));
 
                // animation (blink, face follow up, mouth)
                float turn = animTurn( time );

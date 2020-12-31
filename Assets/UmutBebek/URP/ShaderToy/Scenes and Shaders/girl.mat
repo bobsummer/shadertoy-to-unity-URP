@@ -134,6 +134,7 @@ Material:
     - _ExposureOffset: 11.1
     - _ExposurePower: 0.52
     - _ExposureStrength: 0.09
+    - _FL: 1.7
     - _FlyingHelperBloomScale: 2.61
     - _FlyingHelperFogScale: 1.75
     - _FlyingHelperFrePower: 1
@@ -143,6 +144,7 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
+    - _HeadJawSMin: 0.19
     - _HeadRotationX: -0.3
     - _HeadRotationY: 0.29
     - _HeadRotationZ: 0
@@ -281,10 +283,12 @@ Material:
     - _FrontCloudsOffsetA: {r: -9.1, g: 3.04, b: 0, a: 1}
     - _FrontCloudsOffsetB: {r: -2.97, g: 3.72, b: -0.05, a: 1}
     - _FrontCloudsPos: {r: 9.91, g: 8.6, b: -12.88, a: 1}
-    - _HeadPos: {r: 0, g: -0.04, b: 0.01, a: 1}
+    - _HeadPos: {r: 0, g: 0.05, b: 0.07, a: 1}
+    - _HeadScale: {r: 0.8, g: 0.75, b: 0.85, a: 0}
     - _HeadScarfPosition: {r: -0.005, g: -0.16, b: -0.01, a: 1}
     - _HeadScarfScale: {r: 0.18, g: 0.2, b: 0.03, a: 1}
     - _Horizon: {r: 0.96324, g: 0.80163, b: 0.38954, a: 1}
+    - _JawPos: {r: 0, g: -0.38, b: 0.35, a: 1}
     - _LargeWaveDetail: {r: 0.25, g: 0.73, b: 0, a: 1}
     - _LargeWaveOffset: {r: -3.65, g: 4.41, b: -11.64, a: 1}
     - _LargeWavePowStre: {r: 0.6, g: 2.96, b: -2.08, a: 1}
@@ -315,6 +319,8 @@ Material:
     - _PyramidNoisePrams: {r: 1.5, g: 1, b: 1, a: 1}
     - _PyramidPos: {r: 0, g: 10.9, b: -50, a: 1}
     - _PyramidScale: {r: 34.1, g: 24.9, b: 18, a: 1}
+    - _RayOrigin: {r: -0.5563, g: -0.2, b: 8, a: 0}
+    - _RayTarget: {r: 0, g: -0.3, b: 0, a: 0}
     - _SmallWaveDetail: {r: 3.19, g: 16, b: 6.05, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SunColor: {r: 1, g: 0.95441, b: 0.77206, a: 1}
@@ -347,7 +353,7 @@ Material:
     - _Zenith: {r: 0.77941, g: 0.5898, b: 0.41263, a: 1}
     - cam: {r: 0, g: 0, b: 10, a: 1}
     - gro: {r: 0, g: 0, b: 0, a: 1}
-    - iMouse: {r: 208, g: 199.5, b: -208, a: -199.5}
+    - iMouse: {r: 0, g: 0, b: 0, a: 0}
     - innerColor: {r: 0.7, g: 0.7, b: 0.7, a: 0.1}
     - lgt: {r: 0, g: 0, b: 0, a: 0}
     - lig: {r: -0.4, g: 0.3, b: 0.7, a: 1}
